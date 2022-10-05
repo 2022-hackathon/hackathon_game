@@ -1,11 +1,12 @@
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI    ;
 
-public class IngameManager : MonoBehaviourPun
+public class IngameManager : MonoBehaviourPunCallbacks
 {
     public PhotonView PV;
 
@@ -20,6 +21,7 @@ public class IngameManager : MonoBehaviourPun
     {
         PV = GetComponent<PhotonView>();
         PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity);
+        chatInputfield.ActivateInputField();
 
     }
 
@@ -38,7 +40,7 @@ public class IngameManager : MonoBehaviourPun
                 if (chatInputfield.text.Length != 0)
                 {
 
-                    PV.RPC("SendChatRPC", RpcTarget.All, chatInputfield.text);
+                    PV.RPC("SendChatRPC", RpcTarget.All, PhotonNetwork.NickName + ": " + chatInputfield.text);
 
                     if (chatCor != null)
                         StopCoroutine(chatCor);
@@ -81,11 +83,12 @@ public class IngameManager : MonoBehaviourPun
         chatCor = null;
     }
     [PunRPC]
-    public void SendChatRPC(string c)
+    public void SendChatRPC(string chat)
     {
         chatPanel.SetActive(true);
         bool isInput = false;
-        string chat = PhotonNetwork.LocalPlayer.NickName + ": " + c;
+
+        
         for (int i = 0; i < chatTexts.Length; i++)
         {
             if (chatTexts[i].text == "")
@@ -102,5 +105,15 @@ public class IngameManager : MonoBehaviourPun
 
                 chatTexts[chatTexts.Length - 1].text = chat;
         }
+    }
+
+
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        PV.RPC("SendChatRPC", RpcTarget.All, "<color=yellow>" + newPlayer.NickName + "¥‘¿Ã ¬¸∞°«œºÃΩ¿¥œ¥Ÿ</color>");
+    }
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        PV.RPC("SendChatRPC", RpcTarget.All, "<color=yellow>" + otherPlayer.NickName + "¥‘¿Ã ≈¿Â«œºÃΩ¿¥œ¥Ÿ</color>");
     }
 }

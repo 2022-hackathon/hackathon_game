@@ -13,11 +13,17 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public float _speed;
     public bool _isMoving;
-
     public PhotonView PV;
+
+
 
     public Canvas personalCanvas;
     public TMP_Text nicknameText;
+    Camera cam;
+
+    public Animator anim;
+    readonly int h_AnimParam = Animator.StringToHash("h");
+    readonly int v_AnimParam = Animator.StringToHash("v");
     public MoveDir Dir
     {
         get { return _dir; }
@@ -25,31 +31,39 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     }
     private void Awake()
     {
-        nicknameText.text = GameManager.userData.nickName;
+        
     }
     void Start()
     {
+        cam = Camera.main;
         PV = GetComponent<PhotonView>();
+        anim = GetComponent<Animator>();
         personalCanvas.worldCamera = Camera.main;
-        StartCoroutine(tempCo());
+        _grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<Grid>();
+        Vector3 pos = _grid.CellToWorld(_cellPos) + new Vector3(0.5f, 0.5f);
+        transform.position = pos;
+
+        nicknameText.text = (PV.IsMine) ? PhotonNetwork.NickName : PV.Owner.NickName;
+
+
     }
 
     IEnumerator tempCo()
     {
         yield return new WaitForSeconds(0.5f);
-        _grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<Grid>();
-        Vector3 pos = _grid.CellToWorld(_cellPos) + new Vector3(0.5f, 0.5f);
-        transform.position = pos;
+        
     }
     // Update is called once per frame
     void Update()
     {
         UpdatePosition();
         UpdateIsMoving();
-    
-        if(PV.IsMine)
-         GetDirInput();
 
+        if (PV.IsMine)
+        {
+            GetDirInput();
+            cam.transform.position = new Vector3(transform.position.x,transform.position.y,-10);
+        }
     }
 
     void GetDirInput()
@@ -60,23 +74,29 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (Input.GetKey(KeyCode.W))
         {
             Dir = MoveDir.Up;
+            anim.SetInteger(v_AnimParam, 1);
         }
         else if (Input.GetKey(KeyCode.S))
         {
             Dir = MoveDir.Down;
+            anim.SetInteger(v_AnimParam, -1);
         }
         else if (Input.GetKey(KeyCode.A))
         {
             Dir = MoveDir.Left;
+            anim.SetInteger(h_AnimParam, -1);
         }
         else if (Input.GetKey(KeyCode.D))
         {
             Dir = MoveDir.Right;
+            anim.SetInteger(h_AnimParam, 1);
         }
-            else
-            {
-                Dir = MoveDir.None;
-            }
+        else
+        {
+            Dir = MoveDir.None;
+            anim.SetInteger(h_AnimParam, 0);
+            anim.SetInteger(v_AnimParam, 0);
+        }
     }
 
     void UpdatePosition()
@@ -163,4 +183,6 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             //_isMoving = (bool)stream.ReceiveNext();
         }
     }
+
+
 }

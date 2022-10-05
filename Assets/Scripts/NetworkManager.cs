@@ -24,7 +24,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         DontDestroyOnLoad(gameObject);
         PhotonNetwork.ConnectUsingSettings();
         PhotonNetwork.LocalPlayer.NickName = "A" + Random.Range(0, 1000).ToString();
-        GameManager.userData.nickName = "A" + Random.Range(0, 1000).ToString();
         Debug.Log(PhotonNetwork.LocalPlayer.NickName);
     }
 
