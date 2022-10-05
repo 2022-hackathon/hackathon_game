@@ -7,7 +7,7 @@ using Photon.Realtime;
 using TMPro;
 using System;
 using UnityEngine.SceneManagement;
-
+using System.Text.RegularExpressions;
 
 public class RoomSceneManager : MonoBehaviourPunCallbacks
 {
@@ -29,7 +29,6 @@ public class RoomSceneManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        //RoomListRenewal();
     }
     private void Update()
     {
@@ -53,7 +52,8 @@ public class RoomSceneManager : MonoBehaviourPunCallbacks
     {
         if (roomNameInputField.text.Length == 0 || maxPlayerInputField.text.Length == 0)
             return;
-        PhotonNetwork.CreateRoom(roomNameInputField.text, new RoomOptions { MaxPlayers = byte.Parse(maxPlayerInputField.text) });
+        string str = Regex.Replace(maxPlayerInputField.text, @"[^0-9]", "");
+        PhotonNetwork.CreateRoom(roomNameInputField.text, new RoomOptions { MaxPlayers = byte.Parse(str) });
     }
 
     public void ShowIt(GameObject obj)

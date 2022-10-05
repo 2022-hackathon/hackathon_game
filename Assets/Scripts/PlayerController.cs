@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     public Grid _grid;
     Vector3Int _cellPos = Vector3Int.zero;
     MoveDir _dir;
+    MoveDir _prevDir;
 
 
     public float _speed;
@@ -21,10 +22,17 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     public TMP_Text nicknameText;
     Camera cam;
 
+
+
     public Animator anim;
+
     readonly int h_AnimParam = Animator.StringToHash("h");
     readonly int v_AnimParam = Animator.StringToHash("v");
     readonly int IsMoving_AnimParam = Animator.StringToHash("isMoving");
+
+    public LayerMask activeLayerMask;
+    public ActiveObject curAO;
+
     public MoveDir Dir
     {
         get { return _dir; }
@@ -67,6 +75,45 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         }
     }
 
+    private void FixedUpdate()
+    {
+        Vector2 dir;
+        switch (_prevDir)
+        {
+            case MoveDir.Up:
+                dir = Vector2.up;
+                break;
+            case MoveDir.Down:
+                dir = Vector2.down;
+                break;
+            case MoveDir.Left:
+                dir = Vector2.left;
+                break;
+            case MoveDir.Right:
+                dir = Vector2.right;
+                break;
+            default:
+                dir = Vector2.zero;
+                break;
+        }
+        RaycastHit2D hitinfo =  Physics2D.Raycast(transform.position, dir, 1,activeLayerMask);
+
+        if (hitinfo)
+        {
+            ActiveObject obj = hitinfo.collider.gameObject.GetComponent<ActiveObject>();
+            curAO = obj;
+            obj.infoText.SetActive(true);  
+        }
+        else
+        {
+            
+            curAO?.infoText.SetActive(false);
+            curAO = null;
+        }
+
+
+
+    }
     void GetDirInput()
     {
         anim.SetBool(IsMoving_AnimParam, _isMoving);
@@ -76,18 +123,21 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (Input.GetKey(KeyCode.W))
         {
             Dir = MoveDir.Up;
+            _prevDir = MoveDir.Up;
             anim.SetInteger(v_AnimParam, 1);
             PV.RPC("FlipX", RpcTarget.AllBuffered, false);
         }
         else if (Input.GetKey(KeyCode.S))
         {
             Dir = MoveDir.Down;
+            _prevDir = MoveDir.Down;
             anim.SetInteger(v_AnimParam, -1);
             PV.RPC("FlipX", RpcTarget.AllBuffered, false);
         }
         else if (Input.GetKey(KeyCode.A))
         {
             Dir = MoveDir.Left;
+            _prevDir = MoveDir.Left;
             anim.SetInteger(h_AnimParam, -1);
             PV.RPC("FlipX", RpcTarget.AllBuffered, false);
             
@@ -95,6 +145,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         else if (Input.GetKey(KeyCode.D))
         {
             Dir = MoveDir.Right;
+            _prevDir = MoveDir.Right;
             anim.SetInteger(h_AnimParam, 1);
             PV.RPC("FlipX", RpcTarget.AllBuffered, true);
         }
@@ -103,6 +154,12 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             Dir = MoveDir.None;
             anim.SetInteger(h_AnimParam, 0);
             anim.SetInteger(v_AnimParam, 0);
+        }
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            if (curAO)
+                curAO.Active();
         }
     }
 

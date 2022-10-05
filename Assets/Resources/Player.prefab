@@ -188,6 +188,10 @@ MonoBehaviour:
   personalCanvas: {fileID: 4224467175250867896}
   nicknameText: {fileID: 982461552866754357}
   anim: {fileID: 0}
+  activeLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  curAO: {fileID: 0}
 --- !u!114 &4131752331023694644
 MonoBehaviour:
   m_ObjectHideFlags: 0
