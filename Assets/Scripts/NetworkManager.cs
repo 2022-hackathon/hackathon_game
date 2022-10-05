@@ -3,6 +3,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
@@ -34,5 +35,30 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinLobby();
     }
 
+    public void LoginFunc(string id, string pw)
+    {
+        StartCoroutine(LoginCo(id, pw));
+    }
+    public IEnumerator LoginCo(string id, string pw)
+    {
 
+        yield return null;
+
+        Debug.Log(id + "/" + pw);
+    
+        WWWForm form = new WWWForm();
+
+        form.AddField("id", id);
+        form.AddField("pw", pw);
+        
+        
+
+        UnityWebRequest www = UnityWebRequest.Post("http://192.168.154.124:8080/login", form);
+        yield return www.SendWebRequest();
+
+        string response = www.downloadHandler.text;
+        Debug.Log(response);
+
+
+    }
 }
