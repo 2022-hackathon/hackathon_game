@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     public float _speed;
     public bool _isMoving;
     public PhotonView PV;
-
+    public SpriteRenderer SR;
 
 
     public Canvas personalCanvas;
@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     public Animator anim;
     readonly int h_AnimParam = Animator.StringToHash("h");
     readonly int v_AnimParam = Animator.StringToHash("v");
+    readonly int IsMoving_AnimParam = Animator.StringToHash("isMoving");
     public MoveDir Dir
     {
         get { return _dir; }
@@ -68,6 +69,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     void GetDirInput()
     {
+        anim.SetBool(IsMoving_AnimParam, _isMoving);
         if (IngameManager.isChat)
             return;
 
@@ -75,21 +77,26 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         {
             Dir = MoveDir.Up;
             anim.SetInteger(v_AnimParam, 1);
+            PV.RPC("FlipX", RpcTarget.AllBuffered, false);
         }
         else if (Input.GetKey(KeyCode.S))
         {
             Dir = MoveDir.Down;
             anim.SetInteger(v_AnimParam, -1);
+            PV.RPC("FlipX", RpcTarget.AllBuffered, false);
         }
         else if (Input.GetKey(KeyCode.A))
         {
             Dir = MoveDir.Left;
             anim.SetInteger(h_AnimParam, -1);
+            PV.RPC("FlipX", RpcTarget.AllBuffered, false);
+            
         }
         else if (Input.GetKey(KeyCode.D))
         {
             Dir = MoveDir.Right;
             anim.SetInteger(h_AnimParam, 1);
+            PV.RPC("FlipX", RpcTarget.AllBuffered, true);
         }
         else
         {
@@ -99,6 +106,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         }
     }
 
+    [PunRPC]
+    void FlipX(bool b)
+    {
+        SR.flipX = b;
+    }
     void UpdatePosition()
     {
         if (_isMoving == false)

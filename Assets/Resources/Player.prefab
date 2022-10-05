@@ -155,8 +155,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: ec47f75fe8aff1644ac73998f4ad31b5, type: 3}
+  m_SortingOrder: 10
+  m_Sprite: {fileID: -6598946016331564889, guid: 23748c298f885bf4c89671f6d30f562b,
+    type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -183,6 +184,7 @@ MonoBehaviour:
   _speed: 6.81
   _isMoving: 0
   PV: {fileID: 0}
+  SR: {fileID: 4131752331023694646}
   personalCanvas: {fileID: 4224467175250867896}
   nicknameText: {fileID: 982461552866754357}
   anim: {fileID: 0}
@@ -311,7 +313,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -0.51}
   m_SizeDelta: {x: 5, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &4224467175250867896
@@ -333,7 +335,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 9
   m_TargetDisplay: 0
 --- !u!114 &5475229191111947706
 MonoBehaviour:
@@ -443,8 +445,9 @@ MonoBehaviour:
       m_Calls: []
   m_text: dasfdsa
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3f2b86e89f39e39458d0fa54e01683fc, type: 2}
+  m_sharedMaterial: {fileID: -4625863461311699161, guid: 3f2b86e89f39e39458d0fa54e01683fc,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
