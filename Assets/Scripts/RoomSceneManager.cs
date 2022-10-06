@@ -31,6 +31,7 @@ public class RoomSceneManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        NetworkManager.Instance.connectToMasterFunc();
     }
     private void Update()
     {
@@ -126,10 +127,8 @@ public class RoomSceneManager : MonoBehaviourPunCallbacks
     /// <param name="roomList"></param>
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        Debug.Log("Room List Update");
 
         int roomCount = roomList.Count; // 방 개수 초기화
-        Debug.Log(roomCount);
         for (int i = 0; i < roomCount; i++)
         {
             if (!roomList[i].RemovedFromList)

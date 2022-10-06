@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     public float _speed;
     public bool _isMoving;
     public static bool _isActivity;
+    public bool _prevIsActivity;
     public PhotonView PV;
     public SpriteRenderer SR;
 
@@ -33,6 +34,10 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public LayerMask activeLayerMask;
     public ActiveObject curAO;
+
+    public GameObject gameSpeechBubble;
+    public TMP_Text ChattingBubble;
+    public Coroutine chatCor;
 
     public MoveDir Dir
     {
@@ -54,8 +59,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         transform.position = pos;
 
         nicknameText.text = (PV.IsMine) ? PhotonNetwork.NickName : PV.Owner.NickName;
-
-
+        if (PV.IsMine)
+            IngameManager.Instance.myController = this;
     }
 
     IEnumerator tempCo()
@@ -68,8 +73,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     {
         UpdatePosition();
         UpdateIsMoving();
-
-        if (PV.IsMine)
+;        if (PV.IsMine)
         {
             GetDirInput();
             cam.transform.position = new Vector3(transform.position.x,transform.position.y,-10);
@@ -117,6 +121,11 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     }
     void GetDirInput()
     {
+        if(!_isActivity && _prevIsActivity)
+        {
+            PV.RPC("BubbleActiveChange", RpcTarget.AllBuffered, false);
+            _prevIsActivity = false;
+        }
         anim.SetBool(IsMoving_AnimParam, _isMoving);
         if (IngameManager.isChat)
             return;
@@ -165,6 +174,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             {
                 curAO.Active();
                 _isActivity = true;
+                _prevIsActivity = true;
+                PV.RPC("BubbleActiveChange", RpcTarget.AllBuffered, true);
             }
         }
     }
@@ -259,5 +270,37 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         }
     }
 
+    [PunRPC]
+    public void BubbleActiveChange(bool ac)
+    {
+        gameSpeechBubble.SetActive(ac);
+    }
+
+
+    public void Chatting(string chat)
+    {
+        PV.RPC("ChattingBubbleRPC", RpcTarget.All, chat);
+    }
+    [PunRPC]
+    public void ChattingBubbleRPC(string chat)
+    {
+
+        ChattingBubble.gameObject.transform.parent.gameObject.SetActive(true);
+        ChattingBubble.text =  chat;
+
+        if (chatCor != null)
+            StopCoroutine(chatCor);
+        chatCor = StartCoroutine(chatBubbleCo());
+    }
+    public IEnumerator chatBubbleCo()
+    {
+
+
+        yield return new WaitForSeconds(3f);
+        ChattingBubble.gameObject.transform.parent.gameObject.SetActive(false);
+        ChattingBubble.text = "";
+        chatCor = null;
+
+    }
 
 }

@@ -8,7 +8,7 @@ public class Stock : MonoBehaviour
 {
 
     public string _stockName;
-    public uint _money;
+    public int _money;
     public Sprite _stockImg;
 
 
@@ -17,15 +17,15 @@ public class Stock : MonoBehaviour
     public TMP_Text moneyText;
     public TMP_Text percentText;
 
-    public uint firstPrice;
-    public List<uint> moneyFluctuations = new List<uint>();
+    public int firstPrice;
+    public List<int> moneyFluctuations = new List<int>();
 
     public bool isChoose;
 
     private void Start()
     {
+        firstPrice = _money;
         nameText.text = _stockName;
-        moneyFluctuations.Add(_money);
         StartCoroutine(StockCo());
     }
 
@@ -60,12 +60,12 @@ public class Stock : MonoBehaviour
 
             percentText.text += percent.ToString("0.00") + "%";
 
-            Debug.Log(percent);
-            _money = (updown) ? _money + (uint)(_money * (percent / 100)) : _money - (uint)(_money * (percent / 100));
+            _money = (updown) ? _money + (int)(_money * (percent / 100)) : _money - (int)(_money * (percent / 100));
             moneyText.text = _money.ToString();
 
             if (isChoose)
             {
+                StockManager.Instance.DrawChart(moneyFluctuations);
                 StockManager.Instance.chartStockMoney.text = _money.ToString();
 
                 if (updown)
@@ -84,7 +84,7 @@ public class Stock : MonoBehaviour
             }
             moneyFluctuations.Add(_money);
 
-            yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(2.2f);
 
         }
     }

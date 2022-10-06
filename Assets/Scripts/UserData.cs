@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class UserData
 {
-    public string nickName;
-    public uint _money;
+    public string id;
+    public string nickname;
+    public int money;
 }

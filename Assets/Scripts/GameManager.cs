@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
         get { return _instance; }
     }
 
-    public static UserData userData = new UserData() { _money = 10000000};
+    public static UserData userData = new UserData() ;
 
     private void Awake()
     {
@@ -20,5 +20,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
+
+        NetworkManager.Instance.LoadRank();
     }
 }
