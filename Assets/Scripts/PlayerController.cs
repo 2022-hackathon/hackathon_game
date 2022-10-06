@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
 
     public float _speed;
     public bool _isMoving;
+    public static bool _isActivity;
     public PhotonView PV;
     public SpriteRenderer SR;
 
@@ -119,6 +120,8 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         anim.SetBool(IsMoving_AnimParam, _isMoving);
         if (IngameManager.isChat)
             return;
+        if (PlayerController._isActivity)
+            return;
 
         if (Input.GetKey(KeyCode.W))
         {
@@ -159,7 +162,10 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
         if (Input.GetKeyDown(KeyCode.X))
         {
             if (curAO)
+            {
                 curAO.Active();
+                _isActivity = true;
+            }
         }
     }
 

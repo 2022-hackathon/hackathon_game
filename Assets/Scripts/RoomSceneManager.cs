@@ -20,6 +20,8 @@ public class RoomSceneManager : MonoBehaviourPunCallbacks
     [SerializeField] private Button previousButton; // 이전 버튼
     [SerializeField] private Button nextButton; // 다음 버튼
 
+
+    public GameObject loadingPanel;
     List<RoomInfo> roomList = new List<RoomInfo>(); // 방 리스트
 
     int currentPage = 1; // 현재 방 페이지
@@ -32,6 +34,8 @@ public class RoomSceneManager : MonoBehaviourPunCallbacks
     }
     private void Update()
     {
+        if (NetworkManager.Instance.isConnectMaster)
+            loadingPanel.SetActive(false);
     }
     
     #region 버튼
@@ -53,6 +57,11 @@ public class RoomSceneManager : MonoBehaviourPunCallbacks
         if (roomNameInputField.text.Length == 0 || maxPlayerInputField.text.Length == 0)
             return;
         string str = Regex.Replace(maxPlayerInputField.text, @"[^0-9]", "");
+
+        if(str.Length >=3)
+        {
+            str = 99.ToString();
+        }
         PhotonNetwork.CreateRoom(roomNameInputField.text, new RoomOptions { MaxPlayers = byte.Parse(str) });
     }
 

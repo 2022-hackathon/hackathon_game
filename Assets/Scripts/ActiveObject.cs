@@ -21,7 +21,6 @@ public class ActiveObject : MonoBehaviour
     public virtual void Active()
     {
         Debug.Log("Active!");
-        Instantiate(miniGameObject);
     }
 
 }

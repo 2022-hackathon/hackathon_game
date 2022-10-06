@@ -28,6 +28,12 @@ public class IngameManager : MonoBehaviourPunCallbacks
     private void Update()
     {
 
+        if (PlayerController._isActivity)
+        {
+            chatPanel.SetActive(false);
+            return;
+        }
+
         if (Input.GetKeyDown(KeyCode.Return))
         {
                 chatInputfield.ActivateInputField();
@@ -68,10 +74,9 @@ public class IngameManager : MonoBehaviourPunCallbacks
 
         }
     }
-
     IEnumerator chatCo()
     {
-        yield return new WaitForSeconds(8);
+        yield return new WaitForSeconds(5);
 
         if(chatPanel.activeSelf)
             chatPanel.SetActive(false);
@@ -111,9 +116,11 @@ public class IngameManager : MonoBehaviourPunCallbacks
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         PV.RPC("SendChatRPC", RpcTarget.All, "<color=yellow>" + newPlayer.NickName + "¥‘¿Ã ¬¸∞°«œºÃΩ¿¥œ¥Ÿ</color>");
+        StartCoroutine(chatCo());
     }
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         PV.RPC("SendChatRPC", RpcTarget.All, "<color=yellow>" + otherPlayer.NickName + "¥‘¿Ã ≈¿Â«œºÃΩ¿¥œ¥Ÿ</color>");
+        StartCoroutine(chatCo());
     }
 }

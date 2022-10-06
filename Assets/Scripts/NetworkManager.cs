@@ -1,9 +1,11 @@
 using Photon.Pun;
 using Photon.Realtime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
@@ -12,6 +14,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         get { return _instance; }
     }
+
+    public bool isConnectMaster;
     private void Awake()
     {
         if (_instance == null)
@@ -24,14 +28,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
         DontDestroyOnLoad(gameObject);
         PhotonNetwork.ConnectUsingSettings();
-        PhotonNetwork.LocalPlayer.NickName = "A" + Random.Range(0, 1000).ToString();
         Debug.Log(PhotonNetwork.LocalPlayer.NickName);
     }
 
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Connect To Master");
+        isConnectMaster = true;
         PhotonNetwork.JoinLobby();
     }
 
@@ -47,18 +50,29 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log(id + "/" + pw);
     
         WWWForm form = new WWWForm();
-
         form.AddField("id", id);
-        form.AddField("pw", pw);
         
         
 
-        UnityWebRequest www = UnityWebRequest.Post("http://192.168.154.124:8080/login", form);
+        UnityWebRequest www = UnityWebRequest.Get("http://192.168.72.124:8080/gamegetuser?id=" +id);
         yield return www.SendWebRequest();
 
         string response = www.downloadHandler.text;
         Debug.Log(response);
 
+        response = response.Substring(21, response.Length-22);
+        Debug.Log(response);
 
+        TDUser user = JsonUtility.FromJson<TDUser>(response);
+
+        Debug.Log(user.money);
+        Debug.Log(user.nickname);
+        GameManager.userData.nickName = user.nickname;
+        GameManager.userData._money = (uint)Int32.Parse(user.money);
+
+        PhotonNetwork.LocalPlayer.NickName = GameManager.userData.nickName;
+
+        SceneManager.LoadScene("RoomScene");
     }
+
 }

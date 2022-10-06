@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
         get { return _instance; }
     }
 
-    public static UserData userData = new UserData();
+    public static UserData userData = new UserData() { _money = 10000000};
 
     private void Awake()
     {
